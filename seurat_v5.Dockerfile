@@ -6,11 +6,20 @@
 # https://github.com/satijalab/seurat-docker/blob/master/latest/Dockerfile
 # https://github.com/rocker-org/rocker-versioned2/blob/master/dockerfiles/rstudio_4.3.2.Dockerfile
 
-FROM rocker/rstudio:4.3.2
+FROM --platform=linux/amd64 rocker/rstudio:4.3.2
 
 # Set global R options
 RUN echo "options(repos = 'https://cloud.r-project.org')" > $(R --no-echo --no-save -e "cat(Sys.getenv('R_HOME'))")/etc/Rprofile.site
-ENV RETICULATE_MINICONDA_ENABLED=FALSE
+ENV RETICULATE_MINICONDA_ENABLED=TRUE 
+
+# Anndata
+RUN apt-get install -y apt-transport-https
+RUN sudo apt-get clean
+RUN apt-get --allow-insecure-repositories update
+RUN apt-get --allow-unauthenticated install -y wget python3-dev python3-pip pip
+RUN echo "pip install --no-cache-dir --upgrade pip"
+RUN echo "pip3 install anndata==0.8.0 numpy"
+RUN R -e 'install.packages("anndata", update=TRUE)'
 
 # Install Seurat's system dependencies
 RUN apt-get update
@@ -72,6 +81,8 @@ RUN R --no-echo --no-restore --no-save -e "install.packages('Matrix')"
 # Install rgeos
 RUN R --no-echo --no-restore --no-save -e "install.packages('rgeos')"
 
+RUN R --no-echo --no-restore --no-save -e "install.packages('https://cran.r-project.org/src/contrib/tidyverse_2.0.0.tar.gz')"
+
 RUN install2.r -e -s \
 	BiocManager \
 	dplyr \
@@ -100,7 +111,7 @@ RUN install2.r -e -s \
 #RUN apt-get -y build-dep libcurl4-gnutls-dev
 #RUN apt-get -y install libcurl4-gnutls-dev
 
-#RUN R --no-restore --no-save -e "install.packages('https://github.com/r-lib/devtools/archive/refs/tags/v2.4.5.tar.gz')"
+#RUN R --no-restore --no-save -e "install.packages('https://cran.r-project.org/bin/macosx/big-sur-x86_64/contrib/4.3/devtools_2.4.5.tgz')"
 #RUN R "library(devtools)" # check install
 
 # tidyverse install not working. just install tibble
@@ -139,10 +150,14 @@ RUN R --no-echo --no-restore --no-save -e "remotes::install_github('xmc811/Scill
 # Install presto for fast DE analysis
 RUN R --no-echo --no-restore --no-save -e "remotes::install_github('immunogenomics/presto')"
 
-#CMD [ "R" ]
+# Harmony
+RUN R --no-echo --no-restore --no-save -e "remotes::install_github('immunogenomics/harmony')"
+
+# Install SeuratWrappers
+RUN R --no-restore --no-save -e  "remotes::install_github('satijalab/seurat-wrappers', 'seurat5', quiet = TRUE)"
+
 
 EXPOSE 8787
-#EXPOSE map[8787/tcp:{}]
 
 CMD ["/init"]
 
@@ -153,3 +168,20 @@ RUN rm -rf /tmp/downloaded_packages
 ## Strip binary installed libraries from RSPM
 ## https://github.com/rocker-org/rocker-versioned2/issues/340
 RUN strip /usr/local/lib/R/site-library/*/libs/*.so
+
+
+# To do:
+
+# Install SeuratWrappers
+# Install conda 
+# conda install -c conda-forge r-base r-essentials r-reticulate
+# Install scvi-tools (conda) or pip install scvi-tools
+# https://docs.scvi-tools.org/en/stable/installation.html
+# Install harmony https://github.com/immunogenomics/harmony or https://hub.docker.com/r/jzl010/harmony/tags
+
+# for SoupX:
+# install DropletUtils
+# install SoupX
+
+# for Seurat doublet finder
+# install DoubletFinder
