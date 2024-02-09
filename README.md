@@ -28,7 +28,7 @@ docker run --rm \
   -e PASSWORD=12345 \
   -e DISABLE_AUTH=true \
   --mount type=bind,src="$(pwd)",target=/src \
-  040195206a70
+  e4d667cc1b6b
 
 ```
 

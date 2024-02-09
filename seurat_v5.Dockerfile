@@ -6,11 +6,11 @@
 # https://github.com/satijalab/seurat-docker/blob/master/latest/Dockerfile
 # https://github.com/rocker-org/rocker-versioned2/blob/master/dockerfiles/rstudio_4.3.2.Dockerfile
 
-FROM --platform=linux/amd64 rocker/rstudio:4.3.2
+FROM --platform=linux/amd64 rocker/tidyverse
 
 # Set global R options
 RUN echo "options(repos = 'https://cloud.r-project.org')" > $(R --no-echo --no-save -e "cat(Sys.getenv('R_HOME'))")/etc/Rprofile.site
-ENV RETICULATE_MINICONDA_ENABLED=TRUE 
+ENV RETICULATE_MINICONDA_ENABLED=TRUE
 
 # Anndata
 RUN apt-get install -y apt-transport-https
@@ -104,9 +104,31 @@ RUN install2.r -e -s \
     uwot \
     readr \
     tidyr \ 
+    RcppArmadillo \
     V8
 
 # devtools package
+# maybe try this?
+# https://github.com/hvalev/shiny-server-arm-docker/blob/master/Dockerfile
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    libzmq3-dev \
+    libharfbuzz-dev \
+    libfribidi-dev \
+    libfreetype6-dev \
+    libpng-dev \
+    libtiff5-dev \
+    libjpeg-dev \
+    build-essential \
+    libcurl4-openssl-dev \
+    libxml2-dev \
+    libssl-dev \
+    libfontconfig1-dev \
+    libgit2-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# installing devtools
+RUN R -e "install.packages('devtools', repos='http://cran.rstudio.com/', type='source', clean = TRUE, Ncpus = 2)"
 #RUN apt-get -y install git pandoc make libssl-dev libfreetype6-dev libfribidi-dev libharfbuzz-dev libfontconfig1-dev libxml2-dev libgit2-dev libcurl4-openssl-dev libjpeg-dev libpng-dev libtiff-dev libicu-dev
 #RUN apt-get -y build-dep libcurl4-gnutls-dev
 #RUN apt-get -y install libcurl4-gnutls-dev
@@ -156,6 +178,8 @@ RUN R --no-echo --no-restore --no-save -e "remotes::install_github('immunogenomi
 # Install SeuratWrappers
 RUN R --no-restore --no-save -e  "remotes::install_github('satijalab/seurat-wrappers', 'seurat5', quiet = TRUE)"
 
+# Install LISI
+RUN R --no-echo --no-restore --no-save -e "install.packages('https://github.com/immunogenomics/LISI/archive/refs/tags/v1.0.tar.gz')"
 
 EXPOSE 8787
 
