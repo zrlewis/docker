@@ -60,19 +60,17 @@ RUN /bin/bash /tmp/miniconda.sh -b -p /opt/conda && \
     echo "export PATH=/opt/conda/bin:$PATH" > /etc/profile.d/conda.sh
 ENV PATH /opt/conda/bin:$PATH
 
-RUN conda create -n scvi python=3.9
-RUN conda activate scvi 
-RUN conda install -c conda-forge r-base r-essentials r-reticulate
-RUN conda install scvi-tools -c conda-forge
-RUN conda install anndata -c conda-forge
+#RUN conda init bash
+#RUN conda create -n scvi python=3.9
+#RUN conda activate scvi 
+#RUN conda install -c conda-forge r-base r-essentials r-reticulate
+#RUN conda install scvi-tools -c conda-forge
+#RUN conda install anndata -c conda-forge
 
 # Anndata
 RUN echo "pip install --no-cache-dir --upgrade pip"
 RUN echo "pip3 install anndata==0.8.0 numpy"
 RUN R -e 'install.packages("anndata", update=TRUE)'
-
-# Install system library for rgeos
-RUN apt-get install -y libgeos-dev
 
 # Install UMAP
 RUN LLVM_CONFIG=/usr/lib/llvm-10/bin/llvm-config pip3 install llvmlite
