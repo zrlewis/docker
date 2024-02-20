@@ -25,11 +25,10 @@ docker build -f seurat_v5.Dockerfile --platform linux/amd64 -t zrlewis/seurat_v5
 docker run --rm \
   --platform linux/x86_64 \
   -p 8787:8787 \
-  -e PASSWORD=12345 \
+  -e PASSWORD=PASSWORD \
   -e DISABLE_AUTH=true \
   --mount type=bind,src="$(pwd)",target=/src \
-  e4d667cc1b6b
-
+  29c3f46b83c4
 ```
 
 ### Stopping

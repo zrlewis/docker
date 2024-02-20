@@ -6,7 +6,7 @@
 # https://github.com/rocker-org/rocker-versioned2/blob/master/dockerfiles/rstudio_4.3.2.Dockerfile
 
 FROM --platform=linux/amd64 rocker/tidyverse:4.3.2
-LABEL org.opencontainers.image.authors="zack.lewis@alleninstitute.org"
+#LABEL org.opencontainers.image.authors="zack.lewis@alleninstitute.org"
 
 # Set global R options
 RUN echo "options(repos = 'https://cloud.r-project.org')" > $(R --no-echo --no-save -e "cat(Sys.getenv('R_HOME'))")/etc/Rprofile.site
@@ -46,9 +46,6 @@ RUN apt-get install -y  \
     python3-pip \
     wget \
     pkg-config 
-    
-    #&& \
-    #rm -rf /var/lib/apt/lists/*
     
 #RUN apt-get install -y llvm-10*
 RUN wget -O - https://apt.llvm.org/llvm.sh
@@ -164,7 +161,7 @@ RUN R --no-echo --no-restore --no-save -e "remotes::install_github('immunogenomi
 RUN R --no-echo --no-restore --no-save -e "remotes::install_github('immunogenomics/harmony')"
 
 # Install SeuratWrappers
-RUN R --no-restore --no-save -e  "remotes::install_github('satijalab/seurat-wrappers', 'seurat5', quiet = TRUE)"
+RUN R --no-restore --no-save -e  "devtools::install_github('satijalab/seurat-wrappers', 'seurat5', quiet = TRUE)"
 
 # Install LISI
 RUN R --no-echo --no-restore --no-save -e "install.packages('https://github.com/immunogenomics/LISI/archive/refs/tags/v1.0.tar.gz')"
@@ -177,15 +174,16 @@ RUN rm -rf /tmp/downloaded_packages
 ## https://github.com/rocker-org/rocker-versioned2/issues/340
 RUN strip /usr/local/lib/R/site-library/*/libs/*.so
 
+EXPOSE 8787
+
+CMD ["/init"]
 
 # To do:
 
-# Install SeuratWrappers
 # Install conda 
 # conda install -c conda-forge r-base r-essentials r-reticulate
 # Install scvi-tools (conda) or pip install scvi-tools
 # https://docs.scvi-tools.org/en/stable/installation.html
-# Install harmony https://github.com/immunogenomics/harmony or https://hub.docker.com/r/jzl010/harmony/tags
 
 # for SoupX:
 # install DropletUtils
