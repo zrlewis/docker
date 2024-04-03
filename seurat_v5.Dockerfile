@@ -99,6 +99,7 @@ RUN R --no-echo --no-restore --no-save -e "install.packages('rgeos')"
 
 RUN install2.r -e -s \
 	BiocManager \
+    clustree \
 	dplyr \
     ggplot2 \ 
 	gplots \
@@ -144,6 +145,7 @@ RUN R --no-echo --no-restore --no-save -e "install.packages('https://github.com/
 #RUN R --no-echo --no-restore --no-save -e "remotes::install_github('AllenInstitute/scrattch.hicat')"
 # dependencies for scrattch.hicat that could not be installed: devtools, qlcMatrix, WCGNA
 RUN R --no-echo --no-restore --no-save -e "remotes::install_github('AllenInstitute/scrattch.vis')"
+RUN R --no-echo --no-restore --no-save -e "remotes::install_github('AllenInstitute/scrattch.bigcat')"
 
 # Install Seurat
 RUN R --no-echo --no-restore --no-save -e "install.packages('Seurat')"
@@ -165,6 +167,10 @@ RUN R --no-restore --no-save -e  "devtools::install_github('satijalab/seurat-wra
 
 # Install LISI
 RUN R --no-echo --no-restore --no-save -e "install.packages('https://github.com/immunogenomics/LISI/archive/refs/tags/v1.0.tar.gz')"
+
+# Install scCustomize
+RUN R --no-restore --no-save -e "BiocManager::install(c('ComplexHeatmap', 'dittoSeq', 'DropletUtils', 'Nebulosa'))"
+RUN R --no-restore --no-save -e  "devtools::install_github('samuel-marsh/scCustomize', quiet = TRUE)"
 
 ## Clean up
 RUN rm -rf /var/lib/apt/lists/*

@@ -28,7 +28,7 @@ docker run --rm \
   -e PASSWORD=PASSWORD \
   -e DISABLE_AUTH=true \
   --mount type=bind,src="$(pwd)",target=/src \
-  29c3f46b83c4
+  1b880222dc75
 ```
 
 ### Stopping
@@ -57,4 +57,13 @@ mkdir -p ./singularity && cd $_
 
 # pull
 singularity pull docker://zrlewis/seurat_v5:0.0.4
+```
+
+## Performing a multi-stage build
+
+```
+docker build -f r_system_essentials.Dockerfile --platform linux/amd64 -t zrlewis/r_system_essentials:0.1 .
+docker push zrlewis/r_system_essentials:0.1
+docker build -f seurat_multi_build.Dockerfile --platform linux/amd64 -t zrlewis/seurat_v5:0.0.10 .
+docker push zrlewis/seurat_v5:0.0.10
 ```
