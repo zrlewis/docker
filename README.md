@@ -89,15 +89,22 @@ docker push zrlewis/seurat_v5:0.0.10
 To tunnel into a notebook you need to start an interactive session or sbatch script and then `ssh` into the node it is running on.
 
 ```
+# start an interactive session
+tmux
+srun -c 10 --mem=100G -t 6:00:00 -p celltypes --pty bash 
+
+# cd to your working directory.
+
 # this should work, but having trouble setting password:
-# singularity exec tclust_jupyter_0.1.sif jupyter lab --no-browser --ip 0.0.0.0 --port 9876 
+# singularity exec singularity/tclust_jupyter_0.1.sif jupyter lab --no-browser --ip 0.0.0.0 --port 9876 
 
 # instead, start the image in shell and set up the config
-singularity shell tclust_jupyter_0.1.sif 
+singularity shell singularity/tclust_jupyter_0.1.sif 
 jupyter lab --generate-config
 jupyter lab password
 # enter a password
 # then start the notebook
+# generating a config and password may no longer be necessary after the first time
 jupyter lab --no-browser --ip 0.0.0.0 --port 9876
 
 # in a separate terminal window, locally (not on the HPC)
