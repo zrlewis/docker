@@ -40,7 +40,7 @@ docker run --rm \
   -e PASSWORD=PASSWORD \
   -e DISABLE_AUTH=true \
   --mount type=bind,src="$(pwd)",target=/src \
-  1b880222dc75
+  85604488034c
 ```
 
   - At the page requesting a password, enter the token from the terminal and a password, e.g., `PASSWORD`
@@ -91,7 +91,7 @@ To tunnel into a notebook you need to start an interactive session or sbatch scr
 ```
 # start an interactive session
 tmux
-srun -c 10 --mem=100G -t 6:00:00 -p celltypes --pty bash 
+srun -c 16 --gres=gpu:1 --mem=180G -t 8:00:00 -p celltypes --pty bash
 
 # cd to your working directory.
 
